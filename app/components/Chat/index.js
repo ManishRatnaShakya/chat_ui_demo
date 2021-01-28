@@ -9,6 +9,7 @@ function Chat(props) {
   const [isUnmuteVisible, setIsUnmuteVisible] = useState(false);
   const [muteOption, setMuteOption] = useState(false);
   const [mute, setMute] = useState(false);
+  const muteStatus = props.mute || mute ? 'Unmute' : 'Mute';
   const muteEveryone = () => {
     console.log('mute every user');
     props.setMute(true);
@@ -18,6 +19,15 @@ function Chat(props) {
   const muteMentioned = () => {
     setMute(true);
     setIsVisible(false);
+  };
+  const unmuteEveryone = () => {
+    props.setMute(false);
+    setMute(false);
+    setIsUnmuteVisible(false);
+  };
+  const unmuteMentioned = () => {
+    setMute(false);
+    setIsUnmuteVisible(false);
   };
   const onDelete = id => {
     const u = props.user.filter(u => u.id !== id);
@@ -33,8 +43,14 @@ function Chat(props) {
   const menu = (
     <Menu>
       <Menu.Item>
-        <div onClick={() => setIsVisible(true)}>
-          {props.mute || mute ? 'Unmute' : 'Mute'}
+        <div
+          onClick={() =>
+            muteStatus === 'Mute'
+              ? setIsVisible(true)
+              : setIsUnmuteVisible(true)
+          }
+        >
+          {muteStatus}
         </div>
       </Menu.Item>
       <Menu.Item>
@@ -88,7 +104,7 @@ function Chat(props) {
       <Modal
         visible={isUnmuteVisible}
         onCancel={() => setIsUnmuteVisible(false)}
-        onOk={muteOption === 1 ? muteEveryone : muteMentioned}
+        onOk={muteOption === 1 ? unmuteEveryone : unmuteMentioned}
       >
         <Radio.Group onChange={e => setMuteOption(e.target.value)}>
           <Radio style={radioStyle} value={1}>
